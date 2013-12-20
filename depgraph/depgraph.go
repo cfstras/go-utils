@@ -40,7 +40,7 @@ func printRecursive(p string) {
 		if containsString(stdLib, d) {
 			continue
 		}
-		fmt.Printf("\t\"%s\" -- \"%s\";\n", p, d)
+		fmt.Printf("\t\"%s\" -> \"%s\";\n", p, d)
 
 		if !done[d] {
 			printRecursive(d)
@@ -49,7 +49,7 @@ func printRecursive(p string) {
 }
 
 func main() {
-	fmt.Println("graph G {")
+	fmt.Println("digraph G {")
 	printRecursive(os.Args[1])
 	fmt.Println("}")
 }
@@ -63,9 +63,13 @@ func getStdLib() []string {
 		"crypto",
 		"crypto/aes",
 		"crypto/cipher",
+		"crypto/hmac",
 		"crypto/md5",
 		"crypto/rannd",
 		"crypto/sha1",
+		"crypto/sha256",
+		"crypto/sha512",
+		"crypto/subtle",
 		"database/sql",
 		"database/sql/driver",
 		"encoding/binary",
@@ -73,6 +77,7 @@ func getStdLib() []string {
 		"errors",
 		"flag",
 		"fmt",
+		"hash",
 		"html",
 		"html/template",
 		"io",
