@@ -18,7 +18,7 @@ import (
 
 func main() {
 	fmt.Println("Hello, insanity!")
-	fmt.Println(RunV8(`'Oh, my!'`))
+	fmt.Println(RunV8(`['Oh', 'my!'].join(', ')`))
 }
 
 func RunV8(script string) string {
