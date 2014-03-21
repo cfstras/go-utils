@@ -1,6 +1,4 @@
 // This is a simple command line tool to create a dependency graph from a path.
-// Usage:
-//  depgraph <root package> | dot -Tsvg > graph.svg
 //
 // Patches welcome.
 package main
@@ -10,6 +8,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"strings"
 )
 
 var stdLib []string = getStdLib()
@@ -21,10 +20,13 @@ type goList struct {
 var done = make(map[string]bool)
 
 func getDeps(p string) []string {
+	if containsString(ignored, p) {
+		return []string{}
+	}
 	o, err := exec.Command("go", "list", "-json", p).Output()
 
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %s", err)
+		fmt.Fprintf(os.Stderr, "Error: %s for %s", err, p)
 	}
 
 	list := goList{}
@@ -37,7 +39,8 @@ func printRecursive(p string) {
 	done[p] = true
 
 	for _, d := range getDeps(p) {
-		if containsString(stdLib, d) {
+		spl := strings.Split(d, "/")
+		if containsString(stdLib, spl[0]) {
 			continue
 		}
 		fmt.Printf("\t\"%s\" -> \"%s\";\n", p, d)
@@ -49,10 +52,18 @@ func printRecursive(p string) {
 }
 
 func main() {
+	if len(os.Args) != 2 {
+		fmt.Fprintln(os.Stderr, `Usage:
+	depgraph <root package> | dot -Tsvg > graph.svg`)
+		return
+	}
+
 	fmt.Println("digraph G {")
 	printRecursive(os.Args[1])
 	fmt.Println("}")
 }
+
+var ignored = []string{"C"}
 
 // this is an ugly hack, I know.
 // TODO make this prettier
@@ -61,39 +72,24 @@ func getStdLib() []string {
 		"bufio",
 		"bytes",
 		"crypto",
-		"crypto/aes",
-		"crypto/cipher",
-		"crypto/hmac",
-		"crypto/md5",
-		"crypto/rannd",
-		"crypto/sha1",
-		"crypto/sha256",
-		"crypto/sha512",
-		"crypto/subtle",
-		"database/sql",
-		"database/sql/driver",
-		"encoding/binary",
-		"encoding/json",
+		"database",
+		"encoding",
 		"errors",
 		"flag",
 		"fmt",
 		"hash",
 		"html",
-		"html/template",
+		"html",
 		"io",
-		"io/ioutil",
 		"log",
 		"math",
 		"math/big",
 		"net",
 		"net/http",
 		"os",
-		"os/signal",
-		"os/user",
 		"path",
-		"path/filepath",
 		"reflect",
-		"regexp/syntax",
+		"regexp",
 		"runtime",
 		"sort",
 		"strconv",
