@@ -19,3 +19,10 @@ func MinI(v1 int, val ...int) int {
 	}
 	return v
 }
+
+func AbsI(i int) int {
+	if i < 0 {
+		return -i
+	}
+	return i
+}
