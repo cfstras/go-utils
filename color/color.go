@@ -22,6 +22,10 @@ func Redln(msg ...interface{}) {
 	Colorln(ct.Red, msg...)
 }
 
+func Greenln(msg ...interface{}) {
+	Colorln(ct.Green, msg...)
+}
+
 func Yellow(msg ...interface{}) {
 	Color(ct.Yellow, msg...)
 }
